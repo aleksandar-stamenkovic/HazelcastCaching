@@ -1,16 +1,14 @@
+using Hazelcast;
+using HazelcastCaching.Caching;
+using HazelcastCaching.Models;
+using HazelcastCaching.Repository;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace HazelcastCaching
 {
@@ -41,6 +39,20 @@ namespace HazelcastCaching
                            .AllowAnyOrigin();
                 });
             });
+            var connectionString = "mongodb://localhost:27017";
+            var client = new MongoClient(connectionString);
+            services.AddSingleton<IMongoClient>(client);
+            services.AddTransient<IProductRepository, ProductRepository>();
+            services.AddTransient<IHazelcastCaching<string, Product>, HazelcastCaching<string, Product>>();
+
+            var options = new HazelcastOptionsBuilder().Build();
+            var factory = new SampleDataSerializableFactory();
+            options.Serialization.AddDataSerializableFactory(SampleDataSerializableFactory.FactoryId, factory);
+            options.ClusterName = "dev";
+            options.ClientName = "dotnet";
+            options.Networking.Addresses.Add("127.0.0.1:5701");
+            var hzclient = HazelcastClientFactory.StartNewClientAsync(options).Result;
+            services.AddSingleton<IHazelcastClient>(hzclient);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
