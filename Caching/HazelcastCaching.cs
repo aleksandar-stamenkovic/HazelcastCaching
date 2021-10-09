@@ -26,5 +26,11 @@ namespace HazelcastCaching.Caching
             var map = await client.GetMapAsync<KeyType, ValueType>(cacheName);
             await map.PutAsync(key, value);
         }
+
+        public async Task DeleteFromCacheAsync(string cacheName, KeyType key)
+        {
+            var map = await client.GetMapAsync<KeyType, ValueType>(cacheName);
+            await map.DeleteAsync(key);
+        }
     }
 }

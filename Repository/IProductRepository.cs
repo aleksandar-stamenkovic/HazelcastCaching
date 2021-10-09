@@ -9,5 +9,7 @@ namespace HazelcastCaching.Repository
         Task AddProductAsync(Product product);
         IEnumerable<Product> GetAllProducts();
         Task<Product> GetProductAsync(string code);
+        Task DeleteProductAsync(string code);
+        Task UpdateProductAsync(Product product);
     }
 }

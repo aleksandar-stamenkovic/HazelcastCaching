@@ -32,13 +32,11 @@ namespace HazelcastCaching.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> PostProduct([FromBody] Product product)
+        public async Task PostProduct([FromBody] Product product)
         {
             await caching.WriteToCacheAsync(ServiceSettings.HazelcastCacheName, product.Code, product);
 
             await repository.AddProductAsync(product);
-
-            return Ok();
         }
 
         [HttpGet("{code}")]
@@ -53,6 +51,22 @@ namespace HazelcastCaching.Controllers
             await caching.WriteToCacheAsync(ServiceSettings.HazelcastCacheName, code, product);
 
             return product;
+        }
+
+        [HttpDelete("{code}")]
+        public async Task DeleteProduct(string code)
+        {
+            await caching.DeleteFromCacheAsync(ServiceSettings.HazelcastCacheName, code);
+
+            await repository.DeleteProductAsync(code);
+        }
+
+        [HttpPut]
+        public async Task UpdateProduct([FromBody] Product product)
+        {
+            await caching.WriteToCacheAsync(ServiceSettings.HazelcastCacheName, product.Code, product);
+
+            await repository.UpdateProductAsync(product);
         }
     }
 }

@@ -37,5 +37,24 @@ namespace HazelcastCaching.Repository
 
             return await collection.Find(Builders<Product>.Filter.Eq(x => x.Code, code)).FirstOrDefaultAsync();
         }
+
+        public async Task DeleteProductAsync(string code)
+        {
+            var db = client.GetDatabase(ServiceSettings.MongoDatabaseName);
+            var collection = db.GetCollection<Product>(ServiceSettings.MongoCollectionName);
+
+            await collection.DeleteOneAsync(Builders<Product>.Filter.Eq(x => x.Code, code));
+        }
+
+        public async Task UpdateProductAsync(Product product)
+        {
+            var db = client.GetDatabase(ServiceSettings.MongoDatabaseName);
+            var collection = db.GetCollection<Product>(ServiceSettings.MongoCollectionName);
+
+            await collection.UpdateOneAsync(Builders<Product>.Filter.Eq(x => x.Code, product.Code),
+                                            Builders<Product>.Update.Set(x => x.Name, product.Name)
+                                                                    .Set(x => x.Price, product.Price)
+                                                                    .Set(x => x.Description, product.Description));
+        }
     }
 }
