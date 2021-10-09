@@ -16,24 +16,24 @@ namespace HazelcastCaching.Repository
 
         public async Task AddProductAsync(Product product)
         {
-            var db = client.GetDatabase("my_products_db");
-            var collection = db.GetCollection<Product>("products");
-
+            var db = client.GetDatabase(ServiceSettings.MongoDatabaseName);
+            var collection = db.GetCollection<Product>(ServiceSettings.MongoCollectionName);
+            
             await collection.InsertOneAsync(product);
         }
 
         public IEnumerable<Product> GetAllProducts()
         {
-            var db = client.GetDatabase("my_products_db");
-            var collection = db.GetCollection<Product>("products");
+            var db = client.GetDatabase(ServiceSettings.MongoDatabaseName);
+            var collection = db.GetCollection<Product>(ServiceSettings.MongoCollectionName);
 
             return collection.Find(FilterDefinition<Product>.Empty).ToEnumerable();
         }
 
         public async Task<Product> GetProductAsync(string code)
         {
-            var db = client.GetDatabase("my_products_db");
-            var collection = db.GetCollection<Product>("products");
+            var db = client.GetDatabase(ServiceSettings.MongoDatabaseName);
+            var collection = db.GetCollection<Product>(ServiceSettings.MongoCollectionName);
 
             return await collection.Find(Builders<Product>.Filter.Eq(x => x.Code, code)).FirstOrDefaultAsync();
         }

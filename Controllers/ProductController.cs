@@ -15,7 +15,6 @@ namespace HazelcastCaching.Controllers
     public class ProductController : ControllerBase
     {
         private IProductRepository repository;
-        private IHazelcastClient hzclient;
         private IHazelcastCaching<string, Product> caching;
 
         public ProductController(IProductRepository repository,
@@ -23,7 +22,6 @@ namespace HazelcastCaching.Controllers
                                  IHazelcastCaching<string, Product> caching)
         {
             this.repository = repository;
-            hzclient = hazelcastClient;
             this.caching = caching;
         }
 
@@ -36,7 +34,7 @@ namespace HazelcastCaching.Controllers
         [HttpPost]
         public async Task<IActionResult> PostProduct([FromBody] Product product)
         {
-            await caching.WriteToCacheAsync("products123", product.Code, product);
+            await caching.WriteToCacheAsync(ServiceSettings.HazelcastCacheName, product.Code, product);
 
             await repository.AddProductAsync(product);
 
@@ -46,13 +44,13 @@ namespace HazelcastCaching.Controllers
         [HttpGet("{code}")]
         public async Task<Product> GetProduct(string code)
         {
-            var product = await caching.ReadFromCacheAsync("products123", code);
+            var product = await caching.ReadFromCacheAsync(ServiceSettings.HazelcastCacheName, code);
 
             if (product != null)
                 return product;
 
             product = await repository.GetProductAsync(code);
-            await caching.WriteToCacheAsync("products123", code, product);
+            await caching.WriteToCacheAsync(ServiceSettings.HazelcastCacheName, code, product);
 
             return product;
         }

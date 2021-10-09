@@ -39,7 +39,7 @@ namespace HazelcastCaching
                            .AllowAnyOrigin();
                 });
             });
-            var connectionString = "mongodb://localhost:27017";
+            var connectionString = ServiceSettings.MongoConnectionString;
             var client = new MongoClient(connectionString);
             services.AddSingleton<IMongoClient>(client);
             services.AddTransient<IProductRepository, ProductRepository>();
@@ -48,9 +48,12 @@ namespace HazelcastCaching
             var options = new HazelcastOptionsBuilder().Build();
             var factory = new SampleDataSerializableFactory();
             options.Serialization.AddDataSerializableFactory(SampleDataSerializableFactory.FactoryId, factory);
-            options.ClusterName = "dev";
-            options.ClientName = "dotnet";
-            options.Networking.Addresses.Add("127.0.0.1:5701");
+            options.ClusterName = ServiceSettings.HazelcastClusterName;
+            options.ClientName = ServiceSettings.HazelcastClientName;
+            /*foreach (var networkingAddress in ServiceSettings.HazelcastNetworkingAddresses)
+            {
+                options.Networking.Addresses.Add(networkingAddress);
+            }*/
             var hzclient = HazelcastClientFactory.StartNewClientAsync(options).Result;
             services.AddSingleton<IHazelcastClient>(hzclient);
         }
