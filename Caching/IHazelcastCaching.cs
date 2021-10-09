@@ -1,7 +1,7 @@
 ﻿using Hazelcast.Serialization;
 using System.Threading.Tasks;
 
-namespace Service1.Caching
+namespace HazelcastCaching.Caching
 {
     public interface IHazelcastCaching<KeyType, ValueType> where ValueType : IIdentifiedDataSerializable
     {
