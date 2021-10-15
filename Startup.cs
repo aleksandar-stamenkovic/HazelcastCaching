@@ -46,8 +46,8 @@ namespace HazelcastCaching
             services.AddTransient<IHazelcastCaching<string, Product>, HazelcastCaching<string, Product>>();
 
             var options = new HazelcastOptionsBuilder().Build();
-            var factory = new SampleDataSerializableFactory();
-            options.Serialization.AddDataSerializableFactory(SampleDataSerializableFactory.FactoryId, factory);
+            var factory = new ProductSerializableFactory();
+            options.Serialization.AddDataSerializableFactory(ProductSerializableFactory.FactoryId, factory);
             options.ClusterName = ServiceSettings.HazelcastClusterName;
             options.ClientName = ServiceSettings.HazelcastClientName;
             /*foreach (var networkingAddress in ServiceSettings.HazelcastNetworkingAddresses)

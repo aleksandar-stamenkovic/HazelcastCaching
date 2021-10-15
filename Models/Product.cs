@@ -29,12 +29,12 @@ namespace HazelcastCaching.Models
             output.WriteString(Description);
         }
 
-        public int FactoryId => SampleDataSerializableFactory.FactoryId;
+        public int FactoryId => ProductSerializableFactory.FactoryId;
         int IIdentifiedDataSerializable.ClassId => 100;
     }
 
     // [TODO]: Move this class to a new file.
-    public class SampleDataSerializableFactory : IDataSerializableFactory
+    public class ProductSerializableFactory : IDataSerializableFactory
     {
         public const int FactoryId = 1000;
 
