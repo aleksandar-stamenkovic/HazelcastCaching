@@ -64,22 +64,29 @@ namespace HazelcastCaching.Controllers
             await repository.DeleteProductAsync(code);
         }
 
-        [HttpPut]
+        /*[HttpPut]
         public async Task UpdateProduct([FromBody] Product product)
         {
             await caching.WriteToCacheAsync(ServiceSettings.HazelcastCacheName, product.Code, product);
 
-            await repository.UpdateProductAsync(product);
-        }
+            await repository.UpdateProductAsync(code, product);
+        }*/
 
         [HttpPut("increase-by-percent/{percent}/{code}")]
         public async Task IncreaseProductPrice(float percent, string code)
         {
-            var map = await client.GetMapAsync<string, Product>(ServiceSettings.HazelcastCacheName);
-            await map.ExecuteAsync(new IncreasePriceEntryProcessor(percent), code);
+            var product = await caching.ExecuteAsync(ServiceSettings.HazelcastCacheName, ChangePriceType.Increase, code, percent);
+
+            await repository.UpdateProductAsync(code, product);
         }
 
+        [HttpPut("decrease-by-percent/{percent}/{code}")]
+        public async Task DecreaseProductPrice(float percent, string code)
+        {
+            var product = await caching.ExecuteAsync(ServiceSettings.HazelcastCacheName, ChangePriceType.Decrease, code, percent);
 
+            await repository.UpdateProductAsync(code, product);
+        }
 
 
 

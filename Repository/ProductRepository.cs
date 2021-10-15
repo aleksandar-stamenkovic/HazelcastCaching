@@ -46,12 +46,12 @@ namespace HazelcastCaching.Repository
             await collection.DeleteOneAsync(Builders<Product>.Filter.Eq(x => x.Code, code));
         }
 
-        public async Task UpdateProductAsync(Product product)
+        public async Task UpdateProductAsync(string code, Product product)
         {
             var db = client.GetDatabase(ServiceSettings.MongoDatabaseName);
             var collection = db.GetCollection<Product>(ServiceSettings.MongoCollectionName);
 
-            await collection.UpdateOneAsync(Builders<Product>.Filter.Eq(x => x.Code, product.Code),
+            await collection.UpdateOneAsync(Builders<Product>.Filter.Eq(x => x.Code, code),
                                             Builders<Product>.Update.Set(x => x.Name, product.Name)
                                                                     .Set(x => x.Price, product.Price)
                                                                     .Set(x => x.Description, product.Description));

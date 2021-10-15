@@ -10,6 +10,6 @@ namespace HazelcastCaching.Repository
         IEnumerable<Product> GetAllProducts();
         Task<Product> GetProductAsync(string code);
         Task DeleteProductAsync(string code);
-        Task UpdateProductAsync(Product product);
+        Task UpdateProductAsync(string code, Product product);
     }
 }
