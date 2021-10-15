@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using HazelcastCaching.EntryProcessors;
 
 namespace HazelcastCaching.Controllers
 {
@@ -16,6 +17,7 @@ namespace HazelcastCaching.Controllers
     {
         private IProductRepository repository;
         private IHazelcastCaching<string, Product> caching;
+        private IHazelcastClient client;
 
         public ProductController(IProductRepository repository,
                                  IHazelcastClient hazelcastClient,
@@ -23,6 +25,7 @@ namespace HazelcastCaching.Controllers
         {
             this.repository = repository;
             this.caching = caching;
+            client = hazelcastClient;
         }
 
         [HttpGet("all")]
@@ -67,6 +70,27 @@ namespace HazelcastCaching.Controllers
             await caching.WriteToCacheAsync(ServiceSettings.HazelcastCacheName, product.Code, product);
 
             await repository.UpdateProductAsync(product);
+        }
+
+        [HttpPut("increase-by-percent/{percent}/{code}")]
+        public async Task IncreaseProductPrice(float percent, string code)
+        {
+            var map = await client.GetMapAsync<string, Product>(ServiceSettings.HazelcastCacheName);
+            await map.ExecuteAsync(new IncreasePriceEntryProcessor(percent), code);
+        }
+
+
+
+
+
+        //--
+        [HttpGet("test")]
+        public async Task Test()
+        {
+            var map = await client.GetMapAsync<string, string>("processing-map");
+            //await map.ExecuteAsync(new IncreasePriceEntryProcessor("processed"), "key");
+
+            Console.WriteLine($"Value for key is: {await map.GetAsync("key")}");
         }
     }
 }

@@ -33,6 +33,7 @@ namespace HazelcastCaching.Models
         int IIdentifiedDataSerializable.ClassId => 100;
     }
 
+    // [TODO]: Move this class to a new file.
     public class SampleDataSerializableFactory : IDataSerializableFactory
     {
         public const int FactoryId = 1000;
