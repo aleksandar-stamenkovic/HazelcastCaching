@@ -32,16 +32,4 @@ namespace HazelcastCaching.Models
         public int FactoryId => ProductSerializableFactory.FactoryId;
         int IIdentifiedDataSerializable.ClassId => 100;
     }
-
-    // [TODO]: Move this class to a new file.
-    public class ProductSerializableFactory : IDataSerializableFactory
-    {
-        public const int FactoryId = 1000;
-
-        public IIdentifiedDataSerializable Create(int typeId)
-        {
-            if (typeId == Product.ClassId) return new Product();
-            return null;
-        }
-    }
 }
