@@ -20,7 +20,7 @@ namespace HazelcastCaching
         {
             "127.0.0.1:5701",
         };*/
-        internal static string HazelcastCacheName => "products123";
+        internal static string HazelcastCacheName => "default";
         #endregion
     }
 }
